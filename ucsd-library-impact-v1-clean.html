@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UC San Diego Library — Impact Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #003F6B;
+    --gold: #C69214;
+    --light: #F7F5F0;
+    --white: #FFFFFF;
+    --muted: #6B7280;
+    --border: #E5E0D8;
+    --card: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--light);
+    color: #1a1a1a;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 48px 40px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--gold);
+  }
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .header-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 500;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  header p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+  }
+  .header-meta {
+    margin-top: 20px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.04em;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    font-size: 18px;
+  }
+  .section-title {
+    font-family: 'EB Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .section-period {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+    letter-spacing: 0.03em;
+  }
+
+  /* CARDS GRID */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 22px 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card:hover {
+    box-shadow: 0 4px 20px rgba(0,63,107,0.10);
+    transform: translateY(-2px);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card-value {
+    font-family: 'EB Garamond', serif;
+    font-size: 36px;
+    font-weight: 500;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .card-value.large { font-size: 30px; }
+  .card-label {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .card-sublabel {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* WIDE CARD */
+  .card.wide {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .wide-stat { flex: 1; min-width: 120px; }
+  .wide-divider {
+    width: 1px; height: 48px;
+    background: var(--border);
+  }
+
+  /* HIGHLIGHT CARD */
+  .card.highlight {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+  .card.highlight .card-value { color: white; }
+  .card.highlight .card-label { color: rgba(255,255,255,0.6); }
+  .card.highlight::before { background: var(--gold); opacity: 1; }
+
+  /* FOOTNOTE */
+  .footnote {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* COUNTER ANIMATION */
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card { animation: countUp 0.4s ease both; }
+  .section:nth-child(1) .card:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(1) .card:nth-child(2) { animation-delay: 0.10s; }
+  .section:nth-child(1) .card:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(1) .card:nth-child(4) { animation-delay: 0.20s; }
+  .section:nth-child(2) .card:nth-child(1) { animation-delay: 0.20s; }
+  .section:nth-child(2) .card:nth-child(2) { animation-delay: 0.25s; }
+  .section:nth-child(2) .card:nth-child(3) { animation-delay: 0.30s; }
+  .section:nth-child(2) .card:nth-child(4) { animation-delay: 0.35s; }
+  .section:nth-child(3) .card:nth-child(1) { animation-delay: 0.30s; }
+  .section:nth-child(3) .card:nth-child(2) { animation-delay: 0.35s; }
+  .section:nth-child(3) .card:nth-child(3) { animation-delay: 0.40s; }
+  .section:nth-child(4) .card:nth-child(1) { animation-delay: 0.35s; }
+  .section:nth-child(4) .card:nth-child(2) { animation-delay: 0.40s; }
+  .section:nth-child(4) .card:nth-child(3) { animation-delay: 0.45s; }
+  .section:nth-child(4) .card:nth-child(4) { animation-delay: 0.50s; }
+
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .card.wide { grid-column: span 1; }
+    .wide-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-label">UC San Diego Library</div>
+    <h1>Library Impact Dashboard</h1>
+    <p>Demonstrating the library's contribution to research, learning, and scholarship at UC San Diego.</p>
+    <div class="header-meta">Data Source: ACRL Statistics Survey · Fiscal Year 2024–2025</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- STUDENT LEARNING & INSTRUCTION -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">🎓</span>
+      <h2 class="section-title">Student Learning &amp; Instruction</h2>
+      <span class="section-period">FY 2024–2025</span>
+    </div>
+    <div class="cards">
+      <div class="card highlight">
+        <div class="card-value">19,058</div>
+        <div class="card-label">Attendance at Group Presentations</div>
+      </div>
+      <div class="card">
+        <div class="card-value">15,306</div>
+        <div class="card-label">Reference &amp; Information Transactions</div>
+      </div>
+      <div class="card">
+        <div class="card-value">3,084</div>
+        <div class="card-label">In-depth Consultations</div>
+      </div>
+      <div class="card">
+        <div class="card-value">8,572</div>
+        <div class="card-label">Virtual Reference Services</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLLECTIONS & RESEARCH -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <h2 class="section-title">Collections &amp; Research</h2>
+      <span class="section-period">FY 2024–2025</span>
+    </div>
+    <div class="cards">
+      <div class="card highlight">
+        <div class="card-value large">6,005,946</div>
+        <div class="card-label">Total Resource Usage (Physical &amp; Digital)</div>
+      </div>
+      <div class="card">
+        <div class="card-value">5,589,871</div>
+        <div class="card-label">E-Serials Usage</div>
+      </div>
+      <div class="card">
+        <div class="card-value">385,441</div>
+        <div class="card-label">E-Book &amp; E-Media Usage</div>
+      </div>
+      <div class="card">
+        <div class="card-value">30,634</div>
+        <div class="card-label">Physical Circulation</div>
+      </div>
+      <div class="card">
+        <div class="card-value large">4,511,759</div>
+        <div class="card-label">Total Collection Titles</div>
+        <div class="card-sublabel">Physical + Digital</div>
+      </div>
+      <div class="card">
+        <div class="card-value">901</div>
+        <div class="card-label">Licensed Databases</div>
+      </div>
+      <div class="card">
+        <div class="card-value">408,019</div>
+        <div class="card-label">Institutional Repository Items</div>
+      </div>
+      <div class="card">
+        <div class="card-value large">11,115,630</div>
+        <div class="card-label">Repository Item Views</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIBRARY SPACES & ACCESS -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛</span>
+      <h2 class="section-title">Library Spaces &amp; Access</h2>
+      <span class="section-period">FY 2024–2025</span>
+    </div>
+    <div class="cards">
+      <div class="card highlight">
+        <div class="card-value large">1,251,760</div>
+        <div class="card-label">Annual Gate Count</div>
+      </div>
+      <div class="card">
+        <div class="card-value">40,102</div>
+        <div class="card-label">Visitors in a Typical Week</div>
+      </div>
+      <div class="card">
+        <div class="card-value">89</div>
+        <div class="card-label">Hours Open Per Week (Academic Session)</div>
+      </div>
+      <div class="card">
+        <div class="card-value">17,049</div>
+        <div class="card-label">Interlibrary Loans Received</div>
+        <div class="card-sublabel">Materials obtained for our users</div>
+      </div>
+      <div class="card">
+        <div class="card-value">9,846</div>
+        <div class="card-label">Interlibrary Loans Provided</div>
+        <div class="card-sublabel">Materials shared with other libraries</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAFFING -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">👥</span>
+      <h2 class="section-title">Our People</h2>
+      <span class="section-period">FY 2024–2025</span>
+    </div>
+    <div class="cards">
+      <div class="card highlight">
+        <div class="card-value">230.29</div>
+        <div class="card-label">Total Staff FTEs</div>
+      </div>
+      <div class="card">
+        <div class="card-value">52.38</div>
+        <div class="card-label">Librarians</div>
+      </div>
+      <div class="card">
+        <div class="card-value">47.34</div>
+        <div class="card-label">Other Professional Staff</div>
+      </div>
+      <div class="card">
+        <div class="card-value">112.29</div>
+        <div class="card-label">All Other Paid Staff</div>
+        <div class="card-sublabel">Excluding student assistants</div>
+      </div>
+      <div class="card">
+        <div class="card-value">18.28</div>
+        <div class="card-label">Student Assistants</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCIALS & EXPENSES -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">💼</span>
+      <h2 class="section-title">Investment &amp; Financials</h2>
+      <span class="section-period">FY 2024–2025</span>
+    </div>
+    <div class="cards">
+      <div class="card highlight">
+        <div class="card-value large">$15,053,319</div>
+        <div class="card-label">Total Library Expenditures</div>
+      </div>
+      <div class="card">
+        <div class="card-value large">$10,224,150</div>
+        <div class="card-label">Total Materials &amp; Services</div>
+      </div>
+      <div class="card">
+        <div class="card-value large">$8,604,988</div>
+        <div class="card-label">Ongoing Subscription Commitments</div>
+        <div class="card-sublabel">E-journals, databases, serials</div>
+      </div>
+      <div class="card">
+        <div class="card-value large">$1,307,248</div>
+        <div class="card-label">One-Time Materials Purchases</div>
+        <div class="card-sublabel">Books, backfiles, other materials</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVING OUR COMMUNITY -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-icon">🎓</span>
+      <h2 class="section-title">Community Served</h2>
+      <span class="section-period">Enrollment FY 2024–2025</span>
+    </div>
+    <div class="cards">
+      <div class="card highlight">
+        <div class="card-value">44,256</div>
+        <div class="card-label">Total Student Headcount</div>
+      </div>
+      <div class="card">
+        <div class="card-value">42,178</div>
+        <div class="card-label">Full-Time Equivalent Students</div>
+      </div>
+      <div class="card">
+        <div class="card-value">34,955</div>
+        <div class="card-label">Undergraduate Students</div>
+        <div class="card-sublabel">Full- and part-time combined</div>
+      </div>
+      <div class="card">
+        <div class="card-value">9,301</div>
+        <div class="card-label">Graduate Students</div>
+        <div class="card-sublabel">Full- and part-time combined</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footnote">
+    <strong>Data Sources:</strong> ACRL Trends and Statistics Survey 2024–2025 · Internal Library Reporting 2024–2025<br>
+    UC San Diego Library · <a href="https://library.ucsd.edu" style="color: var(--navy);">library.ucsd.edu</a>
+  </div>
+
+</main>
+
+</body>
+</html>
