@@ -1,0 +1,1 @@
+In this repository, I have experimented with a variety of dashboards to show the impacts of the UCSD Library.  The dashboards were created using ARL datasets, impact story worksheets, impact stories articulated by librarians.  Explore the different styles to see which ones work for various audience.
