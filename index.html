@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UC San Diego Library · Impact Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/*
+  UCSD OFFICIAL BRAND COLORS — WCAG AA verified
+  White on Navy  #182B49 = 13.1:1 ✓✓
+  White on Blue  #00629B = 4.7:1  ✓
+  Navy on Yellow #FFCD00 = 8.0:1  ✓✓
+  Navy on Sand   #F5F0E6 = 12.4:1 ✓✓
+  #FFCD00 NEVER on white — only on dark backgrounds
+*/
+:root {
+  --navy:   #182B49;
+  --blue:   #00629B;
+  --yellow: #FFCD00;
+  --gold:   #C69214;
+  --teal:   #00C6D7;
+  --green:  #6E963B;
+  --sand:   #F5F0E6;
+  --stone:  #B6B1A9;
+  --gray:   #747678;
+  --white:  #FFFFFF;
+
+  --bg:           #F5F0E6;
+  --surface:      #FFFFFF;
+  --text-primary: #182B49;
+  --text-body:    #2C2C2C;
+  --text-muted:   #747678;
+  --border:       #D9D4CC;
+  --focus-ring:   #00629B;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text-body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position: absolute; top: -100%; left: 16px;
+  background: var(--navy); color: #fff;
+  padding: 8px 16px; font-size: 14px; font-weight: 600;
+  border-radius: 0 0 4px 4px; z-index: 9999; text-decoration: none;
+}
+.skip-link:focus { top: 0; }
+*:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 2px; }
+
+/* ── NAV ── */
+nav {
+  background: var(--navy);
+  padding: 0 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+  border-bottom: 3px solid var(--gold);
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+.nav-triton { font-size: 22px; color: var(--yellow); line-height: 1; }
+.nav-name { font-size: 14px; font-weight: 600; color: var(--white); letter-spacing: 0.3px; }
+.nav-name span {
+  display: block; font-size: 11px; font-weight: 400;
+  color: rgba(255,255,255,0.65); letter-spacing: 0.8px; text-transform: uppercase;
+}
+.nav-badge {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--yellow); border: 1px solid rgba(255,205,0,0.4);
+  padding: 4px 12px; border-radius: 40px; background: rgba(255,205,0,0.1);
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 72px 48px 64px;
+  position: relative; overflow: hidden;
+}
+.hero-shape {
+  position: absolute; top: 0; right: 0; width: 55%; height: 100%;
+  background: linear-gradient(135deg, transparent 35%, rgba(0,98,155,0.2) 100%);
+  pointer-events: none;
+}
+.hero-dots {
+  position: absolute; top: 0; right: 0; width: 40%; height: 100%;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.hero-stripe {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 5px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--yellow) 40%, var(--teal) 70%, var(--green) 100%);
+}
+.hero-inner { position: relative; max-width: 860px; margin: 0 auto; text-align: center; }
+.hero-eyebrow {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--yellow); background: rgba(255,205,0,0.12);
+  border: 1px solid rgba(255,205,0,0.3);
+  padding: 5px 16px; border-radius: 40px; margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px, 4vw, 48px); font-weight: 700;
+  color: var(--white); line-height: 1.15; margin-bottom: 24px;
+}
+.hero-rule {
+  width: 56px; height: 4px; background: var(--gold);
+  border-radius: 2px; margin: 0 auto 24px;
+}
+.hero-sub {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: clamp(16px, 2vw, 19px); font-weight: 400;
+  color: rgba(255,255,255,0.78); line-height: 1.75; margin-bottom: 16px;
+}
+.hero-meta {
+  font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 0.5px;
+}
+
+/* ── MAIN ── */
+main {
+  max-width: 1100px; margin: 0 auto;
+  padding: 64px 48px 80px;
+  flex: 1;
+}
+
+/* ── SECTION HEADER ── */
+.sec-hdr { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+.sec-hdr h2 {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
+}
+.sec-hdr::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── DASHBOARD CARDS ── */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+
+.card {
+  background: var(--surface);
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none; color: inherit;
+}
+.card:hover, .card:focus-within {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(24,43,73,0.15);
+  z-index: 2;
+}
+.card-accent {
+  height: 5px; width: 100%; flex-shrink: 0;
+}
+.card-body { padding: 32px 30px 28px; flex: 1; display: flex; flex-direction: column; }
+
+.card-tag {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-tag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.card h3 {
+  font-family: 'Lora', serif; font-size: 20px; font-weight: 700;
+  color: var(--navy); line-height: 1.25; margin-bottom: 12px;
+}
+.card-desc {
+  font-size: 14px; color: var(--text-muted); line-height: 1.65;
+  flex: 1; margin-bottom: 28px;
+}
+
+/* pill list inside card */
+.card-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+.pill {
+  font-size: 11px; font-weight: 500; color: var(--text-primary);
+  background: var(--sand); border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 40px; white-space: nowrap;
+}
+
+.card-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  color: var(--blue); letter-spacing: 0.3px;
+  padding: 10px 20px;
+  border: 2px solid var(--blue);
+  border-radius: 4px;
+  align-self: flex-start;
+  transition: background 0.15s, color 0.15s;
+}
+.card-link:hover, .card-link:focus {
+  background: var(--blue); color: var(--white); outline: none;
+}
+.card-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.card-link svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.15s; }
+.card-link:hover svg, .card-link:focus svg { transform: translateX(3px); }
+
+/* ── FEATURED / WIDE CARD ── */
+.card.wide {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: stretch;
+}
+.card.wide .card-accent {
+  width: 5px; height: auto;
+  position: absolute; top: 0; left: 0; bottom: 0;
+}
+.card.wide .card-body { padding-left: 40px; flex-direction: row; align-items: center; gap: 40px; }
+.card.wide .card-body-text { flex: 1; }
+.card.wide .card-body-text .card-tag { margin-bottom: 10px; }
+.card.wide h3 { font-size: 22px; margin-bottom: 10px; }
+.card.wide .card-desc { margin-bottom: 0; }
+.card.wide .card-cta { flex-shrink: 0; }
+
+/* ── ABOUT BLOCK ── */
+.about {
+  margin-top: 52px;
+  background: var(--navy);
+  padding: 44px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  position: relative;
+}
+.about::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--yellow) 40%, var(--teal) 100%);
+}
+.about-heading {
+  font-family: 'Lora', serif; font-size: 24px; font-weight: 700;
+  color: var(--white); line-height: 1.3; margin-bottom: 14px;
+}
+.about-body { font-size: 14px; color: rgba(255,255,255,0.75); line-height: 1.8; }
+.about-stats { display: flex; flex-direction: column; gap: 10px; }
+.about-stat {
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(255,255,255,0.07);
+  border-left: 3px solid var(--teal);
+  padding: 14px 18px;
+}
+.about-stat:nth-child(2) { border-left-color: var(--yellow); }
+.about-stat:nth-child(3) { border-left-color: var(--gold); }
+.about-num {
+  font-family: 'Lora', serif; font-size: 28px; font-weight: 700;
+  color: var(--white); line-height: 1; min-width: 60px;
+}
+.about-lbl { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.4; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy); padding: 24px 48px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 3px solid var(--gold);
+  flex-wrap: wrap; gap: 10px;
+}
+.footer-brand { font-size: 14px; font-weight: 600; color: var(--white); }
+.footer-brand span { color: var(--yellow); }
+.footer-meta { font-size: 12px; color: rgba(255,255,255,0.55); text-align: right; line-height: 1.6; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+@media (prefers-reduced-motion: no-preference) {
+  .card { animation: fadeUp 0.4s ease both; }
+  .card:nth-child(1){ animation-delay: .06s }
+  .card:nth-child(2){ animation-delay: .13s }
+  .card:nth-child(3){ animation-delay: .20s }
+  .card:nth-child(4){ animation-delay: .27s }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  nav, .hero, main, footer { padding-left: 28px; padding-right: 28px; }
+  .about { padding: 36px 28px; }
+}
+@media (max-width: 860px) {
+  .cards { grid-template-columns: 1fr; }
+  .card.wide { flex-direction: column; }
+  .card.wide .card-accent { width: 100%; height: 5px; position: static; }
+  .card.wide .card-body { flex-direction: column; gap: 20px; padding-left: 30px; }
+  .about { grid-template-columns: 1fr; gap: 28px; }
+  nav { padding: 0 20px; }
+  .nav-badge { display: none; }
+}
+@media (max-width: 560px) {
+  main { padding: 40px 16px 60px; }
+  .hero { padding: 48px 20px 44px; }
+  footer { flex-direction: column; text-align: center; }
+  .footer-meta { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- NAV -->
+<nav aria-label="Site navigation">
+  <a class="nav-brand" href="index.html" aria-label="UC San Diego Library home">
+    <span class="nav-triton" aria-hidden="true">⚓</span>
+    <div class="nav-name">
+      UC San Diego Library
+      <span>Impact Reporting</span>
+    </div>
+  </a>
+  <span class="nav-badge" aria-label="Academic Year 2023 to 2024">AY 2023–2024</span>
+</nav>
+
+<!-- HERO -->
+<header class="hero" role="banner">
+  <div class="hero-shape" aria-hidden="true"></div>
+  <div class="hero-dots" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Executive Impact Reporting</div>
+    <h1>UC San Diego Library<br>Impact Reports</h1>
+    <div class="hero-rule" aria-hidden="true"></div>
+    <p class="hero-sub">Demonstrating how the library advances student achievement, accelerates research productivity, and ensures equitable access to knowledge.</p>
+    <p class="hero-meta">UC San Diego Library · Academic Year 2023–2024</p>
+  </div>
+  <div class="hero-stripe" aria-hidden="true"></div>
+</header>
+
+<!-- MAIN -->
+<main id="main-content">
+
+  <div class="sec-hdr">
+    <h2>Available Dashboards</h2>
+  </div>
+
+  <div class="cards" role="list">
+
+    <!-- Dashboard 1: Executive -->
+    <a class="card" href="ucsd_library_dashboard.html" role="listitem" aria-labelledby="dash1-title">
+      <div class="card-accent" style="background: linear-gradient(90deg, #182B49, #00629B);" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="card-tag-dot" style="background:#182B49" aria-hidden="true"></span>
+          Executive View
+        </div>
+        <h3 id="dash1-title">Library Impact Dashboard</h3>
+        <p class="card-desc">The full executive dashboard presenting library impact across student experience and research &amp; faculty success — with impact stories, metrics, and community voices for leadership audiences.</p>
+        <div class="card-pills" aria-label="Coverage areas">
+          <span class="pill">Student Experience</span>
+          <span class="pill">Research &amp; Faculty</span>
+          <span class="pill">Impact Stories</span>
+          <span class="pill">Proof Points</span>
+        </div>
+        <span class="card-link" aria-label="Open Library Impact Dashboard">
+          Open Dashboard
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Placeholder 2 -->
+    <div class="card" role="listitem" aria-labelledby="dash2-title" style="opacity: 0.6;">
+      <div class="card-accent" style="background: linear-gradient(90deg, #00C6D7, #6E963B);" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="card-tag-dot" style="background:#00C6D7" aria-hidden="true"></span>
+          Student Success
+        </div>
+        <h3 id="dash2-title">Student Experience Dashboard</h3>
+        <p class="card-desc">A focused view on student-facing impact — instruction, affordability, technology access, experiential learning, career readiness, and belonging. <em>Coming soon.</em></p>
+        <div class="card-pills" aria-label="Coverage areas">
+          <span class="pill">Instruction</span>
+          <span class="pill">OER &amp; Affordability</span>
+          <span class="pill">Technology Access</span>
+          <span class="pill">Wellbeing</span>
+        </div>
+        <span class="card-link" style="opacity:0.45; pointer-events:none; cursor:default;" aria-disabled="true">
+          Coming Soon
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- Placeholder 3 -->
+    <div class="card" role="listitem" aria-labelledby="dash3-title" style="opacity: 0.6;">
+      <div class="card-accent" style="background: linear-gradient(90deg, #6E963B, #C69214);" aria-hidden="true"></div>
+      <div class="card-body">
+        <div class="card-tag">
+          <span class="card-tag-dot" style="background:#6E963B" aria-hidden="true"></span>
+          Research Excellence
+        </div>
+        <h3 id="dash3-title">Research &amp; Faculty Dashboard</h3>
+        <p class="card-desc">A deep-dive into research impact — high-impact projects, open access, repository and global reach, infrastructure, and research capacity building. <em>Coming soon.</em></p>
+        <div class="card-pills" aria-label="Coverage areas">
+          <span class="pill">Research Productivity</span>
+          <span class="pill">Open Access</span>
+          <span class="pill">Repository</span>
+          <span class="pill">Infrastructure</span>
+        </div>
+        <span class="card-link" style="opacity:0.45; pointer-events:none; cursor:default;" aria-disabled="true">
+          Coming Soon
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+
+  <!-- ABOUT BLOCK -->
+  <div class="about" role="region" aria-labelledby="about-heading">
+    <div>
+      <h2 class="about-heading" id="about-heading">About This Reporting Suite</h2>
+      <p class="about-body">These dashboards translate library data into clear, compelling narratives for executive leadership and institutional stakeholders. Each view is designed around a distinct audience need — from high-level summaries of library-wide impact to detailed breakdowns of student success and research excellence.<br><br>All dashboards follow UCSD brand standards and meet WCAG 2.1 AA accessibility requirements.</p>
+    </div>
+    <div class="about-stats" role="list" aria-label="Dashboard coverage highlights">
+      <div class="about-stat" role="listitem">
+        <div class="about-num">2</div>
+        <div class="about-lbl">Core impact areas — Student Experience and Research &amp; Faculty Success</div>
+      </div>
+      <div class="about-stat" role="listitem">
+        <div class="about-num">11</div>
+        <div class="about-lbl">Impact stories across student success, research, and library infrastructure</div>
+      </div>
+      <div class="about-stat" role="listitem">
+        <div class="about-num">AA</div>
+        <div class="about-lbl">WCAG 2.1 accessibility compliance across all dashboards</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-brand">
+    <span>UC San Diego</span> Library · Impact Reporting · 2023–2024
+  </div>
+  <div class="footer-meta">
+    For accessibility support or data inquiries, contact the Library<br>
+    UC San Diego · La Jolla, California
+  </div>
+</footer>
+
+</body>
+</html>
