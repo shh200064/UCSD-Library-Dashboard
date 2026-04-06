@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UC San Diego Library — Impact Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #002654;
+    --gold: #C69214;
+    --gold-light: #E8B84B;
+    --sand: #F5EDD6;
+    --white: #FAFAF8;
+    --slate: #4A5568;
+    --ink: #1A202C;
+    --teal: #0B6477;
+    --coral: #C4533A;
+    --mist: #EBF0F5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 48px 60px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(198,146,20,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 30%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(11,100,119,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.05;
+    max-width: 700px;
+  }
+  header h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+  .header-sub {
+    margin-top: 16px;
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.3px;
+  }
+  .header-range {
+    margin-top: 24px;
+    display: inline-block;
+    background: rgba(198,146,20,0.18);
+    border: 1px solid rgba(198,146,20,0.4);
+    color: var(--gold-light);
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  /* ── MAIN ── */
+  main { padding: 52px 60px; max-width: 1400px; margin: 0 auto; }
+
+  /* ── SECTION TITLES ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    margin-top: 52px;
+  }
+  .section-label:first-child { margin-top: 0; }
+  .section-icon {
+    width: 36px; height: 36px;
+    background: var(--navy);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .section-label h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .section-label p {
+    font-size: 13px;
+    color: var(--slate);
+    margin-top: 2px;
+  }
+
+  /* ── KPI GRID ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+    margin-bottom: 0;
+  }
+  .kpi-card {
+    background: var(--navy);
+    color: white;
+    border-radius: 14px;
+    padding: 26px 24px 22px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0,38,84,0.18);
+  }
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; right: -20px;
+    width: 90px; height: 90px;
+    background: rgba(198,146,20,0.12);
+    border-radius: 50%;
+  }
+  .kpi-card.alt { background: var(--gold); }
+  .kpi-card.alt .kpi-label { color: rgba(255,255,255,0.8); }
+  .kpi-card.teal-card { background: var(--teal); }
+  .kpi-emoji { font-size: 22px; margin-bottom: 10px; }
+  .kpi-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(255,255,255,0.7);
+  }
+  .kpi-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 8px;
+  }
+
+  /* ── CHART GRID ── */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .chart-grid.thirds {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid rgba(0,38,84,0.08);
+    box-shadow: 0 2px 12px rgba(0,38,84,0.05);
+  }
+  .chart-card.wide { grid-column: 1 / -1; }
+  .chart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .chart-sub {
+    font-size: 12px;
+    color: var(--slate);
+    margin-bottom: 20px;
+  }
+  .chart-container { position: relative; height: 220px; }
+  .chart-container.tall { height: 280px; }
+
+  /* ── HIGHLIGHT BAND ── */
+  .highlight-band {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 100%);
+    border-radius: 20px;
+    padding: 36px 48px;
+    color: white;
+    margin-bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+  }
+  .hb-stat { text-align: center; }
+  .hb-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+  .hb-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── TREND BADGE ── */
+  .trend-up { color: #48BB78; font-size: 11px; font-weight: 600; }
+  .trend-down { color: #FC8181; font-size: 11px; font-weight: 600; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 60px;
+    padding: 24px 60px;
+    border-top: 1px solid rgba(0,38,84,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--slate);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(0,38,84,0.1), transparent);
+    margin: 12px 0 0;
+  }
+
+  @media (max-width: 900px) {
+    main { padding: 32px 24px; }
+    header { padding: 36px 24px; }
+    .chart-grid, .chart-grid.thirds { grid-template-columns: 1fr; }
+    .highlight-band { grid-template-columns: 1fr; gap: 20px; padding: 28px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">UC San Diego · Association of Research Libraries</div>
+  <h1>Library <em>Impact</em><br>Dashboard</h1>
+  <p class="header-sub">Measuring research support, student engagement, and collections growth over time</p>
+  <div class="header-range">2012 – 2023</div>
+</header>
+
+<main>
+
+  <!-- ── AT A GLANCE KPIs ── -->
+  <div class="section-label">
+    <div class="section-icon">📊</div>
+    <div>
+      <h2>At a Glance — 2023</h2>
+      <p>Key metrics from the most recent reporting year</p>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-emoji">📚</div>
+      <div class="kpi-value">5.6M</div>
+      <div class="kpi-label">Volumes Held</div>
+      <div class="kpi-sub">Physical & digital collections</div>
+    </div>
+    <div class="kpi-card alt">
+      <div class="kpi-emoji">🔬</div>
+      <div class="kpi-value">9.9M</div>
+      <div class="kpi-label">Article Requests</div>
+      <div class="kpi-sub">Full-text journal downloads</div>
+    </div>
+    <div class="kpi-card teal-card">
+      <div class="kpi-emoji">🎓</div>
+      <div class="kpi-value">25,836</div>
+      <div class="kpi-label">Instruction Participants</div>
+      <div class="kpi-sub">Attended library presentations</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-emoji">🔎</div>
+      <div class="kpi-value">5.5M</div>
+      <div class="kpi-label">Database Searches</div>
+      <div class="kpi-sub">Research queries answered</div>
+    </div>
+    <div class="kpi-card alt">
+      <div class="kpi-emoji">🔁</div>
+      <div class="kpi-value">26.5K</div>
+      <div class="kpi-label">Interlibrary Loans</div>
+      <div class="kpi-sub">Resources shared & borrowed</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-emoji">📖</div>
+      <div class="kpi-value">2.3M</div>
+      <div class="kpi-label">Electronic Books</div>
+      <div class="kpi-sub">+298% since 2012</div>
+    </div>
+  </div>
+
+  <div style="height:40px"></div>
+
+  <!-- ── HIGHLIGHT BAND ── -->
+  <div class="highlight-band">
+    <div class="hb-stat">
+      <div class="hb-value">12yr</div>
+      <div class="hb-label">Continuous ARL Reporting</div>
+    </div>
+    <div class="hb-stat">
+      <div class="hb-value">243</div>
+      <div class="hb-label">Instruction Sessions in 2023</div>
+    </div>
+    <div class="hb-stat">
+      <div class="hb-value">18.4K</div>
+      <div class="hb-label">Reference Queries in 2023</div>
+    </div>
+  </div>
+
+  <!-- ── STUDENT SUCCESS ── -->
+  <div class="section-label">
+    <div class="section-icon">🎓</div>
+    <div>
+      <h2>Student Success & Instruction</h2>
+      <p>Library instruction programs that build research skills and information literacy</p>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <div class="chart-title">Instruction Participants Over Time</div>
+      <div class="chart-sub">Students attending library presentations annually</div>
+      <div class="chart-container">
+        <canvas id="instructionChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Reference Queries</div>
+      <div class="chart-sub">Research assistance requests received by library staff</div>
+      <div class="chart-container">
+        <canvas id="referenceChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card wide">
+      <div class="chart-title">Circulation & Active Use</div>
+      <div class="chart-sub">Initial item circulations — physical checkouts and in-library use</div>
+      <div class="chart-container tall">
+        <canvas id="circulationChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FACULTY RESEARCH ── -->
+  <div class="section-label">
+    <div class="section-icon">🔬</div>
+    <div>
+      <h2>Faculty Research Support</h2>
+      <p>Resources enabling discovery, publication, and scholarly inquiry</p>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card wide">
+      <div class="chart-title">Full-Text Article Requests (Journals)</div>
+      <div class="chart-sub">Successful downloads — a direct proxy for active research engagement</div>
+      <div class="chart-container tall">
+        <canvas id="articleChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Database Searches</div>
+      <div class="chart-sub">Regular database queries indicating research activity</div>
+      <div class="chart-container">
+        <canvas id="dbChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Interlibrary Loans</div>
+      <div class="chart-sub">Lending + borrowing: resource sharing across institutions</div>
+      <div class="chart-container">
+        <canvas id="illChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COLLECTIONS ── -->
+  <div class="section-label">
+    <div class="section-icon">📚</div>
+    <div>
+      <h2>Collections Growth</h2>
+      <p>Expanding access to information resources for the campus community</p>
+    </div>
+  </div>
+
+  <div class="chart-grid thirds">
+    <div class="chart-card" style="grid-column: 1 / 3;">
+      <div class="chart-title">Volumes Held vs. Electronic Books</div>
+      <div class="chart-sub">Total collection size alongside e-book portfolio growth</div>
+      <div class="chart-container tall">
+        <canvas id="collectionsChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Collection Composition</div>
+      <div class="chart-sub">2023 snapshot: print vs. electronic</div>
+      <div class="chart-container tall" style="display:flex;align-items:center;justify-content:center;">
+        <canvas id="compositionChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>UC San Diego Library · Association of Research Libraries (ARL) Data</span>
+  <span>Reporting period: 2012–2023 · Data reflects annual institutional submission</span>
+</footer>
+
+<script>
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+  const YEARS = [2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023];
+  const NAVY = '#002654';
+  const GOLD = '#C69214';
+  const TEAL = '#0B6477';
+  const CORAL = '#C4533A';
+
+  const raw = {
+    presentations: [1269,643,308,520,538,665,732,833,717,436,322,243],
+    participants:  [18606,10740,9654,18492,25665,31544,27691,27212,16411,31284,17877,25836],
+    reference:     [108142,94134,51692,59422,27993,20598,16849,19972,14523,444,9394,18380],
+    circulation:   [596800,221611,196155,180338,129852,153652,159099,148136,93652,10967,48169,51048],
+    articles:      [493893,0,0,5974475,null,7440990,6905598,6428592,344138,9024,3307158,9930267],
+    dbSearches:    [2632292,3280398,3586011,null,null,1345865,12490643,2208438,18661910,0,9920052,5530888],
+    illLend:       [22726,19635,18270,17152,16590,21717,21558,19136,16504,5186,9859,10426],
+    illBorrow:     [20162,17764,15985,4144,15802,16748,14806,14225,16319,11094,14308,16125],
+    volumes:       [3466702,4009952,5583014,5365746,4395656,4484768,5162681,5288731,5648999,5721647,7429538,5641630],
+    ebooks:        [588230,763919,1784849,2313499,1196986,1262361,1458478,1556783,1909050,1966552,1707691,2343031],
+  };
+
+  const nullToNull = arr => arr.map(v => (v === null || v === 0) ? null : v);
+
+  function sparkStyle(color) {
+    return {
+      borderColor: color,
+      backgroundColor: color + '18',
+      borderWidth: 2.5,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      tension: 0.4,
+      fill: true,
+    };
+  }
+
+  const baseOpts = (yLabel) => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: NAVY,
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.75)',
+        padding: 10,
+        cornerRadius: 8,
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { color: '#718096', font: { size: 11 } }
+      },
+      y: {
+        grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false },
+        ticks: {
+          color: '#718096', font: { size: 11 },
+          callback: v => v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v
+        }
+      }
+    }
+  });
+
+  // Instruction Participants
+  new Chart(document.getElementById('instructionChart'), {
+    type: 'bar',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data: raw.participants,
+        backgroundColor: YEARS.map(y => y === 2023 ? GOLD : NAVY + 'CC'),
+        borderRadius: 5,
+        borderSkipped: false,
+      }]
+    },
+    options: { ...baseOpts('Participants'), plugins: { ...baseOpts().plugins } }
+  });
+
+  // Reference Queries
+  new Chart(document.getElementById('referenceChart'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data: raw.reference,
+        ...sparkStyle(CORAL),
+      }]
+    },
+    options: baseOpts('Queries')
+  });
+
+  // Circulation
+  new Chart(document.getElementById('circulationChart'), {
+    type: 'bar',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        label: 'Circulations',
+        data: raw.circulation,
+        backgroundColor: YEARS.map(y => {
+          if (y <= 2016) return NAVY;
+          if (y <= 2019) return TEAL;
+          return CORAL + 'BB';
+        }),
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      ...baseOpts('Items'),
+      plugins: {
+        legend: { display: false },
+        tooltip: baseOpts().plugins.tooltip,
+        annotation: {}
+      }
+    }
+  });
+
+  // Article Requests
+  new Chart(document.getElementById('articleChart'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data: nullToNull(raw.articles),
+        borderColor: GOLD,
+        backgroundColor: GOLD + '20',
+        borderWidth: 3,
+        pointRadius: 4,
+        pointBackgroundColor: GOLD,
+        tension: 0.4,
+        fill: true,
+        spanGaps: false,
+      }]
+    },
+    options: baseOpts('Requests')
+  });
+
+  // DB Searches
+  new Chart(document.getElementById('dbChart'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data: nullToNull(raw.dbSearches),
+        ...sparkStyle(TEAL),
+        spanGaps: false,
+      }]
+    },
+    options: baseOpts('Searches')
+  });
+
+  // ILL
+  new Chart(document.getElementById('illChart'), {
+    type: 'bar',
+    data: {
+      labels: YEARS,
+      datasets: [
+        {
+          label: 'Lending',
+          data: raw.illLend,
+          backgroundColor: NAVY,
+          borderRadius: 4,
+          borderSkipped: false,
+          stack: 'ill'
+        },
+        {
+          label: 'Borrowing',
+          data: raw.illBorrow,
+          backgroundColor: GOLD,
+          borderRadius: 4,
+          borderSkipped: false,
+          stack: 'ill'
+        }
+      ]
+    },
+    options: {
+      ...baseOpts('Transactions'),
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#4A5568', font: { size: 11 }, boxWidth: 12, padding: 12 }
+        },
+        tooltip: baseOpts().plugins.tooltip
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { color: '#718096', font: { size: 11 } } },
+        y: { stacked: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#718096', font: { size: 11 }, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'K' : v } }
+      }
+    }
+  });
+
+  // Collections
+  new Chart(document.getElementById('collectionsChart'), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [
+        {
+          label: 'Total Volumes',
+          data: raw.volumes,
+          borderColor: NAVY,
+          backgroundColor: NAVY + '10',
+          borderWidth: 2.5,
+          pointRadius: 3,
+          tension: 0.4,
+          fill: true,
+        },
+        {
+          label: 'E-Books',
+          data: raw.ebooks,
+          borderColor: GOLD,
+          backgroundColor: GOLD + '15',
+          borderWidth: 2.5,
+          pointRadius: 3,
+          tension: 0.4,
+          fill: true,
+        }
+      ]
+    },
+    options: {
+      ...baseOpts('Volumes'),
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#4A5568', font: { size: 11 }, boxWidth: 12, padding: 12 }
+        },
+        tooltip: baseOpts().plugins.tooltip
+      }
+    }
+  });
+
+  // Composition Donut
+  const ebooks2023 = 2343031;
+  const total2023 = 5641630;
+  const print2023 = total2023 - ebooks2023;
+  new Chart(document.getElementById('compositionChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Print / Other', 'Electronic Books'],
+      datasets: [{
+        data: [print2023, ebooks2023],
+        backgroundColor: [NAVY, GOLD],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      cutout: '68%',
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: { color: '#4A5568', font: { size: 11 }, boxWidth: 12, padding: 16 }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const pct = ((ctx.parsed / total2023) * 100).toFixed(1);
+              const val = ctx.parsed >= 1e6 ? (ctx.parsed/1e6).toFixed(2)+'M' : ctx.parsed.toLocaleString();
+              return ` ${val} (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+</script>
+</body>
+</html>
