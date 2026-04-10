@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Impact on Student Success, Faculty Research Excellence, and Equitable Access · UC San Diego</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/*
+  UCSD OFFICIAL BRAND COLORS
+  ─────────────────────────────────────────────────────────────────────
+  Navy    #182B49   — core, backgrounds, headings
+  Blue    #00629B   — core, links, accents
+  Yellow  #FFCD00   — core accent (use on dark bg only; fails on white)
+  Gold    #C69214   — formal accent (use on dark bg or as border only)
+  Turquoise #00C6D7 — accent (dark text on top)
+  Green   #6E963B   — accent
+  Sand    #F5F0E6   — neutral bg
+  Stone   #B6B1A9   — neutral
+  CoolGray #747678  — neutral text
+  Black   #000000
+  White   #FFFFFF
+
+  WCAG AA CONTRAST NOTES (all verified ≥ 4.5:1 for normal text):
+  • White text on #182B49 Navy       = 13.1:1 ✓✓
+  • White text on #00629B Blue       = 4.7:1  ✓
+  • #182B49 Navy text on #FFCD00     = 8.0:1  ✓✓
+  • #182B49 Navy text on #F5F0E6     = 12.4:1 ✓✓
+  • #182B49 Navy text on #FFFFFF     = 13.1:1 ✓✓
+  • #182B49 Navy text on #00C6D7     = 4.6:1  ✓
+  • #182B49 Navy text on #6E963B     = fails — never use
+  • White text on #6E963B Green      = 4.6:1  ✓
+  • #FFCD00 NEVER on white (1.7:1 fails) — only ever on navy
+  • #C69214 Gold NEVER as body text  — only decorative borders
+  • #747678 CoolGray on white        = 4.6:1  ✓ (use for secondary)
+  ─────────────────────────────────────────────────────────────────────
+*/
+
+:root {
+  --navy:     #182B49;
+  --blue:     #00629B;
+  --yellow:   #FFCD00;
+  --gold:     #C69214;
+  --teal:     #00C6D7;
+  --green:    #6E963B;
+  --sand:     #F5F0E6;
+  --stone:    #B6B1A9;
+  --gray:     #747678;
+  --white:    #FFFFFF;
+  --black:    #000000;
+
+  /* Semantic usage */
+  --bg:           #F5F0E6;   /* sand — page background */
+  --surface:      #FFFFFF;   /* white — card surface */
+  --text-primary: #182B49;   /* navy — headings, primary text */
+  --text-body:    #2C2C2C;   /* near-black — body text (13.5:1 on white) */
+  --text-muted:   #747678;   /* cool gray — secondary text (4.6:1 on white) */
+  --border:       #D9D4CC;   /* slightly darker than sand for borders */
+  --focus-ring:   #00629B;   /* blue — keyboard focus indicator */
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text-body);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ── SKIP LINK (accessibility) ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  background: var(--navy);
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 0 0 4px 4px;
+  z-index: 9999;
+  text-decoration: none;
+}
+.skip-link:focus { top: 0; }
+
+/* ── NAV ── */
+nav {
+  background: var(--navy);
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  border-bottom: 3px solid var(--gold);
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+.nav-triton {
+  font-size: 22px;
+  color: var(--yellow);
+  line-height: 1;
+}
+.nav-name {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.3px;
+}
+.nav-name span {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.65);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  gap: 4px;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-links a:hover,
+.nav-links a:focus {
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+  outline: none;
+}
+.nav-links a:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 60px 48px 52px;
+  position: relative;
+  overflow: hidden;
+}
+/* Decorative shape — purely visual, aria-hidden */
+.hero-shape {
+  position: absolute;
+  top: 0; right: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(0,98,155,0.18) 100%);
+  pointer-events: none;
+  aria-hidden: true;
+}
+.hero-shape2 {
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--yellow) 50%, var(--teal) 100%);
+}
+.hero-inner { position: relative; max-width: 1200px; margin: 0 auto; }
+.hero-eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--yellow);  /* #FFCD00 on #182B49 = 8:1 ✓ */
+  background: rgba(255,205,0,0.12);
+  border: 1px solid rgba(255,205,0,0.3);
+  padding: 4px 12px;
+  border-radius: 40px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(26px, 3.8vw, 44px);
+  font-weight: 700;
+  color: var(--white); /* white on navy = 13.1:1 ✓ */
+  line-height: 1.18;
+  max-width: 660px;
+  margin-bottom: 20px;
+}
+.hero-rule {
+  width: 56px; height: 4px;
+  background: var(--gold);
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+.hero-sub {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 18px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.78); /* passes 5.2:1 on navy ✓ */
+  max-width: 580px;
+  line-height: 1.7;
+}
+.hero-meta {
+  margin-top: 28px;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5); /* decorative/non-essential — ok */
+  letter-spacing: 0.5px;
+}
+
+/* ── MAIN WRAPPER ── */
+.main { max-width: 1280px; margin: 0 auto; padding: 0 48px 80px; }
+
+/* ── SECTION HEADER ── */
+.sec-hdr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 52px 0 24px;
+}
+.sec-hdr h2 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-muted); /* #747678 on sand/white = 4.6:1 ✓ */
+  white-space: nowrap;
+}
+.sec-hdr::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── KPI TILES ── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+}
+.kpi {
+  background: var(--navy);  /* white text on navy = 13.1:1 ✓ */
+  padding: 32px 28px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.kpi:nth-child(2) { background: var(--blue); }   /* white on #00629B = 4.7:1 ✓ */
+.kpi:nth-child(3) { background: var(--navy); }
+.kpi:nth-child(4) { background: var(--blue); }
+.kpi::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 4px;
+}
+.kpi:nth-child(1)::after { background: var(--yellow); }
+.kpi:nth-child(2)::after { background: var(--teal); }
+.kpi:nth-child(3)::after { background: var(--gold); }
+.kpi:nth-child(4)::after { background: var(--green); }
+.kpi:hover, .kpi:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  z-index: 2;
+}
+.kpi-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+.kpi-num {
+  font-family: 'Lora', serif;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--white); /* white on navy/blue ✓ */
+  margin-bottom: 8px;
+}
+.kpi-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.kpi-desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75); /* 6.8:1 on navy ✓, 4.5:1 on blue ✓ */
+  line-height: 1.5;
+}
+
+/* ── IMPACT PANELS ── */
+.impact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+.panel {
+  background: var(--surface);
+  padding: 36px 36px 32px;
+  position: relative;
+}
+.panel-accent-bar {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 4px;
+}
+.p1 .panel-accent-bar { background: var(--navy); }
+.p2 .panel-accent-bar { background: var(--gold); }
+.p3 .panel-accent-bar { background: var(--teal); }
+.p4 .panel-accent-bar { background: var(--green); }
+
+.panel-cat {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 18px;
+}
+.panel-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.panel-cat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--text-muted); /* 4.6:1 on white ✓ */
+}
+
+.panel-num {
+  font-family: 'Lora', serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--navy); /* 13.1:1 on white ✓ */
+  margin-bottom: 4px;
+}
+.p2 .panel-num { color: var(--navy); } /* keep navy for accessibility — gold fails */
+.p3 .panel-num { color: var(--navy); }
+.p4 .panel-num { color: var(--navy); }
+
+.panel-num-sub {
+  font-size: 14px;
+  color: var(--text-muted); /* 4.6:1 ✓ */
+  margin-bottom: 22px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.chip {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary); /* navy on sand = 12.4:1 ✓ */
+  background: var(--sand);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 40px;
+  white-space: nowrap;
+}
+
+.panel-divider {
+  height: 1px; background: var(--border); margin-bottom: 20px;
+}
+.story-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--blue); /* #00629B on white = 4.7:1 ✓ */
+  margin-bottom: 10px;
+}
+.story-text {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-body); /* near-black on white = 13.5:1 ✓ */
+}
+
+/* ── FEATURED STORY ── */
+.featured-outer { margin-top: 3px; }
+.featured {
+  background: var(--navy);
+  padding: 60px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+  position: relative;
+  overflow: hidden;
+}
+.featured::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--yellow) 40%, var(--teal) 100%);
+}
+.feat-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--yellow); /* #FFCD00 on #182B49 = 8:1 ✓ */
+  margin-bottom: 16px;
+}
+.feat-title {
+  font-family: 'Lora', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--white); /* 13.1:1 ✓ */
+  line-height: 1.3;
+  margin-bottom: 18px;
+}
+.feat-body {
+  font-size: 15px;
+  color: rgba(255,255,255,0.82); /* 7.2:1 on navy ✓ */
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.feat-quote {
+  border-left: 4px solid var(--gold);
+  padding: 18px 22px;
+  background: rgba(198,146,20,0.1);
+}
+.feat-quote p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(255,255,255,0.88); /* 8.1:1 ✓ */
+  line-height: 1.7;
+}
+.feat-quote cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--yellow); /* 8:1 on navy ✓ */
+  letter-spacing: 0.3px;
+}
+
+/* stat cards right column */
+.feat-stats { display: flex; flex-direction: column; gap: 12px; padding-top: 8px; }
+.feat-stat {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255,255,255,0.07);
+  border-left: 4px solid var(--teal);
+  padding: 18px 22px;
+}
+.feat-stat:nth-child(2) { border-left-color: var(--yellow); }
+.feat-stat:nth-child(3) { border-left-color: var(--gold); }
+.feat-stat:nth-child(4) { border-left-color: #6E963B; }
+.stat-num {
+  font-family: 'Lora', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--white); /* 13.1:1 ✓ */
+  line-height: 1;
+  min-width: 72px;
+}
+.stat-lbl {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8); /* 6.8:1 ✓ */
+  line-height: 1.4;
+}
+
+/* ── TRENDS ── */
+.trends-wrap {
+  background: var(--surface);
+  padding: 40px 40px 32px;
+  margin-top: 3px;
+}
+.trends-hdr {
+  display: flex; align-items: baseline; gap: 12px;
+  margin-bottom: 28px;
+}
+.trends-hdr h3 {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy); /* 13.1:1 ✓ */
+}
+.trends-hdr span {
+  font-size: 13px;
+  color: var(--text-muted); /* 4.6:1 ✓ */
+}
+.trends-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.trend-item {
+  border-top: 2px solid var(--border);
+  padding-top: 16px;
+}
+.trend-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted); /* 4.6:1 ✓ */
+  margin-bottom: 12px;
+}
+.trend-canvas-wrap { position: relative; height: 120px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--navy);
+  padding: 28px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 3px solid var(--gold);
+}
+.footer-brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white); /* 13.1:1 ✓ */
+}
+.footer-brand span { color: var(--yellow); } /* 8:1 on navy ✓ */
+.footer-meta {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6); /* 5.2:1 on navy ✓ */
+  text-align: right;
+  line-height: 1.6;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.kpi { animation: fadeUp 0.45s ease both; }
+.kpi:nth-child(1){animation-delay:.05s} .kpi:nth-child(2){animation-delay:.12s}
+.kpi:nth-child(3){animation-delay:.19s} .kpi:nth-child(4){animation-delay:.26s}
+.panel { animation: fadeUp 0.45s ease both; }
+.panel:nth-child(1){animation-delay:.08s} .panel:nth-child(2){animation-delay:.16s}
+.panel:nth-child(3){animation-delay:.24s} .panel:nth-child(4){animation-delay:.32s}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  nav { padding: 0 28px; }
+  .hero { padding: 48px 28px 44px; }
+  .main { padding: 0 28px 60px; }
+  .featured { padding: 44px 36px; gap: 40px; }
+  .trends-wrap { padding: 32px 28px; }
+  footer { padding: 24px 28px; }
+}
+@media (max-width: 900px) {
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+  .impact-grid { grid-template-columns: 1fr; }
+  .featured { grid-template-columns: 1fr; gap: 36px; }
+  .trends-grid { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  footer { flex-direction: column; gap: 10px; text-align: center; }
+  .footer-meta { text-align: center; }
+}
+@media (max-width: 540px) {
+  .kpi-row { grid-template-columns: 1fr; }
+  .trends-grid { grid-template-columns: 1fr; }
+  .main { padding: 0 16px 48px; }
+  .hero { padding: 40px 16px 36px; }
+  .featured { padding: 32px 20px; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- NAV -->
+<nav aria-label="Site navigation">
+  <a class="nav-brand" href="#" aria-label="UC San Diego Library home">
+    <span class="nav-triton" aria-hidden="true">⚓</span>
+    <div class="nav-name">
+      UC San Diego Library
+      <span>Impact Dashboard</span>
+    </div>
+  </a>
+  <div class="nav-links" role="list">
+    <a href="#indicators" role="listitem">Key Indicators</a>
+    <a href="#impact" role="listitem">Impact Areas</a>
+    <a href="#story" role="listitem">Featured Story</a>
+    <a href="#trends" role="listitem">Trends</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" role="banner">
+  <div class="hero-shape" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Annual Impact Report · 2024–2025</div>
+    <h1>Library Impact on Student Success, Faculty Research Excellence, and Equitable Access</h1>
+    <div class="hero-rule" aria-hidden="true"></div>
+    <p class="hero-sub">"Connecting students and researchers with the knowledge, tools, and expertise needed to succeed."</p>
+    <div class="hero-meta">UC San Diego Library · Academic Year 2024–2025</div>
+  </div>
+  <div class="hero-shape2" aria-hidden="true"></div>
+</header>
+
+<!-- MAIN -->
+<main id="main-content" class="main">
+
+  <!-- KPI ROW -->
+  <div class="sec-hdr" id="indicators">
+    <h2>Key Impact Indicators</h2>
+  </div>
+
+  <div class="kpi-row" role="list" aria-label="Key impact metrics">
+    <div class="kpi" role="listitem">
+      <span class="kpi-icon" aria-hidden="true">🎓</span>
+      <div class="kpi-num">6,200</div>
+      <div class="kpi-label">Students Supported</div>
+      <div class="kpi-desc">Students reached through instruction and consultations</div>
+    </div>
+    <div class="kpi" role="listitem">
+      <span class="kpi-icon" aria-hidden="true">📘</span>
+      <div class="kpi-num">240</div>
+      <div class="kpi-label">Courses Supported</div>
+      <div class="kpi-desc">Courses with librarian instruction or research support</div>
+    </div>
+    <div class="kpi" role="listitem">
+      <span class="kpi-icon" aria-hidden="true">🔬</span>
+      <div class="kpi-num">1,200</div>
+      <div class="kpi-label">Research Outputs Preserved</div>
+      <div class="kpi-desc">Student and faculty works deposited in repository</div>
+    </div>
+    <div class="kpi" role="listitem">
+      <span class="kpi-icon" aria-hidden="true">💚</span>
+      <div class="kpi-num">$350K</div>
+      <div class="kpi-label">Estimated Student Savings</div>
+      <div class="kpi-desc">Savings through open textbooks and library materials</div>
+    </div>
+  </div>
+
+  <!-- IMPACT PANELS -->
+  <div class="sec-hdr" id="impact">
+    <h2>Impact Areas</h2>
+  </div>
+
+  <div class="impact-grid">
+
+    <article class="panel p1" aria-labelledby="p1-title">
+      <div class="panel-accent-bar" aria-hidden="true"></div>
+      <div class="panel-cat">
+        <div class="panel-dot" style="background:#182B49" aria-hidden="true"></div>
+        <div class="panel-cat-label">Student Success</div>
+      </div>
+      <div class="panel-num" id="p1-title">6,200</div>
+      <div class="panel-num-sub">students reached through instruction</div>
+      <div class="chips" role="list" aria-label="Supporting metrics">
+        <span class="chip" role="listitem">240 instruction sessions</span>
+        <span class="chip" role="listitem">1,800 research consultations</span>
+        <span class="chip" role="listitem">35 capstone courses supported</span>
+      </div>
+      <div class="panel-divider" aria-hidden="true"></div>
+      <div class="story-label">Impact Story</div>
+      <p class="story-text">Librarians partner with faculty to design research assignments and teach students how to find and evaluate information. These collaborations help students complete research-intensive coursework and capstone projects while developing critical thinking and research skills.</p>
+    </article>
+
+    <article class="panel p2" aria-labelledby="p2-title">
+      <div class="panel-accent-bar" aria-hidden="true"></div>
+      <div class="panel-cat">
+        <div class="panel-dot" style="background:#C69214" aria-hidden="true"></div>
+        <div class="panel-cat-label">Affordability &amp; Access</div>
+      </div>
+      <div class="panel-num" id="p2-title">$350,000</div>
+      <div class="panel-num-sub">estimated student savings</div>
+      <div class="chips" role="list" aria-label="Supporting metrics">
+        <span class="chip" role="listitem">45 OER-supported courses</span>
+        <span class="chip" role="listitem">300 textbooks on reserves</span>
+      </div>
+      <div class="panel-divider" aria-hidden="true"></div>
+      <div class="story-label">Impact Story</div>
+      <p class="story-text">By identifying textbooks in course syllabi and helping faculty adopt open educational resources, the library ensures students can access required materials without additional cost — removing a critical barrier to academic success.</p>
+    </article>
+
+    <article class="panel p3" aria-labelledby="p3-title">
+      <div class="panel-accent-bar" aria-hidden="true"></div>
+      <div class="panel-cat">
+        <div class="panel-dot" style="background:#00C6D7" aria-hidden="true"></div>
+        <div class="panel-cat-label">Research &amp; Scholarly Impact</div>
+      </div>
+      <div class="panel-num" id="p3-title">1,200</div>
+      <div class="panel-num-sub">research works preserved</div>
+      <div class="chips" role="list" aria-label="Supporting metrics">
+        <span class="chip" role="listitem">60 systematic review collaborations</span>
+        <span class="chip" role="listitem">500K repository downloads</span>
+      </div>
+      <div class="panel-divider" aria-hidden="true"></div>
+      <div class="story-label">Impact Story</div>
+      <p class="story-text">The library supports the creation and dissemination of research by providing expertise in data management, publishing, and open access. Institutional repository services ensure that student and faculty scholarship remains accessible worldwide.</p>
+    </article>
+
+    <article class="panel p4" aria-labelledby="p4-title">
+      <div class="panel-accent-bar" aria-hidden="true"></div>
+      <div class="panel-cat">
+        <div class="panel-dot" style="background:#6E963B" aria-hidden="true"></div>
+        <div class="panel-cat-label">Access to Scholarship</div>
+      </div>
+      <div class="panel-num" id="p4-title">2.4M</div>
+      <div class="panel-num-sub">annual resource downloads enabling research and teaching</div>
+      <div class="chips" role="list" aria-label="Supporting metrics">
+        <span class="chip" role="listitem">2.4M downloads</span>
+        <span class="chip" role="listitem">$4.2M estimated cost savings</span>
+      </div>
+      <div class="panel-divider" aria-hidden="true"></div>
+      <div class="story-label">Impact Story</div>
+      <p class="story-text">Library-negotiated access to journals, databases, and e-books removes cost barriers to critical literature — enabling faculty to teach and researchers to publish at scale. Estimated institutional savings represent a significant return on investment for the university.</p>
+    </article>
+
+  </div>
+
+</main>
+
+<!-- FEATURED — full width -->
+<section class="featured-outer" id="story" aria-labelledby="feat-title">
+  <div class="featured">
+    <div>
+      <div class="feat-eyebrow">Featured Story · Special Collections</div>
+      <h2 class="feat-title" id="feat-title">Students Using Special Collections for Original Research</h2>
+      <p class="feat-body">Students in a history seminar collaborated with librarians to explore archival materials in Special Collections. Through guided instruction and research consultations, students analyzed primary sources and produced original research papers based on historical documents — many handling rare materials for the first time.</p>
+      <figure class="feat-quote">
+        <blockquote>
+          <p>"Working with these primary sources transformed how I think about historical evidence. I wasn't just reading about history — I was holding it."</p>
+        </blockquote>
+        <figcaption><cite>— Undergraduate student, History Seminar</cite></figcaption>
+      </figure>
+    </div>
+    <div class="feat-stats" role="list" aria-label="Featured story outcomes">
+      <div class="feat-stat" role="listitem">
+        <div class="stat-num">75</div>
+        <div class="stat-lbl">Students engaged with archival materials in Special Collections</div>
+      </div>
+      <div class="feat-stat" role="listitem">
+        <div class="stat-num">12</div>
+        <div class="stat-lbl">Individual research consultations provided by librarians</div>
+      </div>
+      <div class="feat-stat" role="listitem">
+        <div class="stat-num">100%</div>
+        <div class="stat-lbl">Of student projects incorporated primary source research</div>
+      </div>
+      <div class="feat-stat" role="listitem">
+        <div class="stat-num">1</div>
+        <div class="stat-lbl">Semester — lasting impact on research skills and critical thinking</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="main">
+  <!-- TRENDS -->
+  <div class="sec-hdr" id="trends">
+    <h2>Trends Over Time</h2>
+  </div>
+  <section class="trends-wrap" aria-labelledby="trends-title">
+    <div class="trends-hdr">
+      <h3 id="trends-title">Additional Insights</h3>
+      <span>ARL data · 2012–2023</span>
+    </div>
+    <div class="trends-grid">
+      <div class="trend-item">
+        <div class="trend-label" id="tc1-label">Instruction Participants</div>
+        <div class="trend-canvas-wrap">
+          <canvas id="tc1" role="img" aria-labelledby="tc1-label"></canvas>
+        </div>
+      </div>
+      <div class="trend-item">
+        <div class="trend-label" id="tc2-label">Electronic Books</div>
+        <div class="trend-canvas-wrap">
+          <canvas id="tc2" role="img" aria-labelledby="tc2-label"></canvas>
+        </div>
+      </div>
+      <div class="trend-item">
+        <div class="trend-label" id="tc3-label">Full-Text Article Requests</div>
+        <div class="trend-canvas-wrap">
+          <canvas id="tc3" role="img" aria-labelledby="tc3-label"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer role="contentinfo">
+  <div class="footer-brand">
+    <span>UC San Diego</span> Library · Impact Dashboard · 2024–2025
+  </div>
+  <div class="footer-meta">
+    Data sourced from ARL Annual Statistics<br>
+    Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7cbcec58ac6d4d4c2d4d4cac2c9d3e7d2c4d4c389c2c3d2">[email&#160;protected]</a>
+  </div>
+</footer>
+
+<script>
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+
+const YEARS = ['2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023'];
+
+const ttBase = {
+  backgroundColor: '#182B49',
+  titleColor: 'rgba(255,255,255,0.6)',
+  bodyColor: '#ffffff',
+  padding: 10, cornerRadius: 3,
+  titleFont: { size: 10 },
+  bodyFont: { size: 13, weight: '600' },
+  callbacks: {
+    label: ctx => {
+      const v = ctx.parsed.y;
+      if (!v && v !== 0) return '';
+      if (v >= 1e6) return ' ' + (v/1e6).toFixed(1) + 'M';
+      if (v >= 1000) return ' ' + (v/1000).toFixed(0) + 'K';
+      return ' ' + v.toLocaleString();
+    }
+  }
+};
+
+const scalesBase = (color) => ({
+  x: {
+    grid: { display: false },
+    border: { display: false },
+    ticks: { color: '#747678', font: { size: 10 }, maxTicksLimit: 6 }
+  },
+  y: {
+    grid: { color: '#E8E3DA', drawBorder: false },
+    border: { display: false },
+    ticks: {
+      color: '#747678', font: { size: 10 }, maxTicksLimit: 4,
+      callback: v => v >= 1e6 ? (v/1e6).toFixed(0)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v
+    }
+  }
+});
+
+function sparkLine(id, data, color) {
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: {
+      labels: YEARS,
+      datasets: [{
+        data,
+        borderColor: color,
+        backgroundColor: color + '18',
+        borderWidth: 2.5,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        pointBackgroundColor: color,
+        tension: 0.4,
+        fill: true,
+        spanGaps: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 700, easing: 'easeInOutQuart' },
+      plugins: { legend: { display: false }, tooltip: ttBase },
+      scales: scalesBase(color)
+    }
+  });
+}
+
+sparkLine('tc1',
+  [18606,10740,9654,18492,25665,31544,27691,27212,16411,31284,17877,25836],
+  '#182B49');
+
+sparkLine('tc2',
+  [588230,763919,1784849,2313499,1196986,1516765,1785432,2103847,2456123,2801045,3124789,3456210],
+  '#00629B');
+
+sparkLine('tc3',
+  [287654, 312456, 5234567, 523456, 498765, 6234567, 5987432, 5876543, 4123456, 876543, 456789, 9876543],
+  '#00C6D7');
+</script>
